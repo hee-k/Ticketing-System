@@ -2,13 +2,14 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <string.h>
 
 void intro();
-void join();
-void login();
+void join(char* name, char* password);
+int login(char* name, char* password);
 int selectMenu();
 
-void selectShow(int count);
+int selectShow();
 //void details();
 //void cancle();
 //void ticketing_concert();
@@ -21,25 +22,47 @@ void popup();
 void cursorView();
 void gotoxy(int x, int y);
 
-typedef struct information
-{
+/*
+typedef struct information {
 	char title[50]; // 공연 이름
 	char date[50];  // 공연 날짜
 	char name[20];  // 예매자
 	char seat[10];  // 예매 좌석
 	int num;		// 예매 번호	
 } info;
+*/
 
 void main()
 {
+	char name[20] = { 0 };
+	char password[20] = { 0 };
 	int count = 0;
+	int select = 0;
+
 	template();
 	intro();
+	join(name, password);
+	while (1)
+	{
+		int res = login(name, password);
+		if (res == 1)
+			break;
+	}
 	int menu = selectMenu();
 	switch (menu)
 	{
 	case 1:
-		selectShow(count);
+		selectShow();
+		switch (select)
+		{
+		case 1:
+			//ticketing_concert();
+			break;
+		case 2:
+			//gig[count] = {"크리스마스 연극", "2021년 12월 25일 20시"};
+			ticketing_gig();
+			break;
+		}
 		count++;
 		break;
 		/*
@@ -51,7 +74,7 @@ void main()
 	}
 }
 
-// 회원가입 or 로그인
+// 프로그램 시작 화면
  void intro()
 {
 	int sel;
@@ -64,62 +87,70 @@ void main()
 	gotoxy(54, 27);
 	getch();
 
+}
+
+ // 회원가입
+void join(char *name, char *password)
+{
 	system("cls");
 	template();
 	gotoxy(27, 10);
 	printf("티켓 예매 프로그램 C-Park에 오신 것을 환영합니다!\n\n");
-	printf("C-Park이 처음이시라면 회원가입을, 이미 가입하셨다면 로그인을 선택해주세요.\n\n\n");
-	printf("회 원 가 입  :  1 입력\n");
-	printf("로  그  인   :  2 입력\n\n");
-	printf("번 호 입 력  :  _\b");
-	scanf("%d", &sel);
-
-	switch (sel)
-	{
-	case 1:
-		join(); break;
-	case 2:
-		login(); break;
-	}
-}
-
-// 회원가입 함수(파일 입출력으로 만들기)
-void join()
-{
-	system("cls");
-	template();
-	gotoxy(27, 10);
-	printf("파일 입출력으로 회원가입 실행\n\n");
-	printf("사용 할 아이디를 입력해주세요 : ");
+	gotoxy(27, 12);
+	printf("프로그램 사용 전, 먼저 회원가입을 해주세요\n\n");
+	gotoxy(27, 17);
+	printf("예매자 이름을 입력해주세요 : ");
+	scanf("%s", name);
+	gotoxy(27, 20);
 	printf("사용 할 비밀번호를 입력해주세요 : ");
-	getch();
+	scanf("%s", password);
 
 	printf("회원 가입이 완료되었습니다!\n\n");
 	printf("enter를 누르면 로그인 화면으로 이동합니다.\n");
-
-	login();
+	getch();
 }
 
-void login()
+// 로그인
+int login(char *name, char *password)
 {
+	char receiveName[20] = { 0 };
+	int receivePassword[20] = { 0 };
+	int i = 0, offset = 0;
+
 	system("cls");
 	template();
 	gotoxy(27, 10);
-
-	char name[10];
-	int password[20] = { 0 };
-	int i = 0, offset = 0;
-	printf("C-Park 티켓 예매를 위해 로그인을 해주세요.\n\n\n");
-	printf("아  이  디  :  ");
-	scanf("%s", name);	// 한글 오류
+	printf("C-Park 티켓 예매를 위해 로그인을 해주세요.\n");
+	gotoxy(27, 15);
+	printf("이    름  :  ");
+	scanf("%s", receiveName);
+	gotoxy(27, 17);
 	printf("\n\n\n비 밀 번 호  :  ");
-	while (password[offset] = getch() != '\r')
+	while ((receivePassword[offset] = getch()) != '\r')
 	{
 		putch('*');
 		offset++;
 	}
+	
+	int n = strcmp(receiveName, name);
+	int p = strcmp(receivePassword, password);
+
+	if (n == 0 && p == 0)
+	{
+		printf("로그인 성공!");
+		Sleep(1000);
+		return 1;
+	}
+		
+	else
+	{
+		printf("로그인에 실패하였습니다. 다시 시도해주세요!");
+		Sleep(1000);
+		return 2;
+	}
 }
 
+// 메뉴 선택(예매, 예매내역, 예매취소)
 int selectMenu()
 {
 	template();
@@ -136,30 +167,23 @@ int selectMenu()
 	return menu;
 }
 
-void selectShow(int count)
+int selectShow()
 {
+	int choice;
+	char concert[10];
+	char gig[10];
+
 	system("cls");
 	template();
 	gotoxy(27, 10);
-	int choice;
-	info concert[10];
-	info gig[10];
 
-	printf("현재 진행중인 공연 리스트입니다.\n\n");
-	printf("1번  아이돌 BU 콘서트/2021년 12월 15일 18시\n");
-	printf("2번  크리스마스 연극/2021년 12월 25일 20시\n");
+	printf("현재 진행중인 공연 리스트입니다.\n\n\n");
+	printf("1번  아이돌 BU 콘서트/2021년 12월 15일 18시\n\n");
+	printf("2번  크리스마스 연극/2021년 12월 25일 20시\n\n");
 	printf("예매 하실 공연을 선택해주세요.(번호 입력) : ");
 	scanf("%d", &choice);
-
-	switch (choice)
-	{
-	case 1:
-		//ticketing_concert(); break;
-	case 2:
-		//gig[count] = {"크리스마스 연극", "2021년 12월 25일 20시", "홍길동", "A31", 0001};
-		ticketing_gig();
-		break;
-	}
+	
+	return choice;
 }
 
 // 좌석 선택
@@ -378,3 +402,83 @@ void gotoxy(int x, int y)
 	COORD Pos = {x - 1, y - 1};
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
 }
+
+/*
+파일 입출력 보류
+// 회원가입 함수(파일 입출력으로 만들기)
+void join()
+{
+	system("cls");
+	template();
+	gotoxy(27, 10);
+
+	char name[20] = { 0 };
+	char password[20] = { 0 };
+	printf("파일 입출력으로 회원가입 실행\n\n");
+	printf("사용 할 아이디를 입력해주세요 : ");
+	scanf("%s", name);
+	printf("사용 할 비밀번호를 입력해주세요 : ");
+	scanf("%s", password);
+
+	FILE* fp = NULL;
+
+	fp = fopen("user.txt", "w");
+	fputs(name, fp);
+	fputs(password, fp);
+
+	//파일 열기 실패 시
+	if (fp == NULL)
+		printf("파일 열기에 실패했습니다.\n");
+
+	fclose(fp);
+
+	printf("회원 가입이 완료되었습니다!\n\n");
+	printf("enter를 누르면 로그인 화면으로 이동합니다.\n");
+	getch();
+
+	login();
+}
+
+void login()
+{
+	system("cls");
+	template();
+	gotoxy(27, 10);
+
+	char name[20] = { 0 };
+	char password[20] = { 0 };
+	int i = 0, offset = 0;
+	printf("C-Park 티켓 예매를 위해 로그인을 해주세요.\n");
+	gotoxy(27, 15);
+	printf("아  이  디  :  ");
+	scanf("%s", name);	// 한글 오류
+	gotoxy(27, 17);
+	printf("\n\n\n비 밀 번 호  :  ");
+	while (password[offset] = getch() != '\r')
+	{
+		putch('*');
+		offset++;
+	}
+
+	FILE* fp = NULL;
+	char getName[20];
+	char getPassword[20];
+
+	fp = fopen("user.txt", "r");
+
+	fgets(getName, sizeof(getName), fp);
+	fgetc('\n', fp);
+	fgets(getPassword, sizeof(getPassword), fp);
+
+	fclose(fp);
+	int n = strcmp(getName, name);
+	int p = strcmp(getPassword, password);
+
+	if (n == 0 && p == 0)
+		printf("로그인 성공");
+	else
+		printf("로그인 실패");
+	getch();
+}
+
+*/
