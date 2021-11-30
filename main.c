@@ -15,62 +15,94 @@ int selectShow();
 //void ticketing_concert();
 void ticketing_gig();
 
-void booking(int *seat);
+void booking(int show, struct information* inform);
 
 void template();
 void popup();
 void cursorView();
 void gotoxy(int x, int y);
 
-/*
 typedef struct information {
-	char title[50]; // 공연 이름
-	char date[50];  // 공연 날짜
-	char name[20];  // 예매자
-	char seat[10];  // 예매 좌석
-	int num;		// 예매 번호	
-} info;
-*/
+	char title[50];		// 공연 이름
+	char date[50];		// 공연 날짜
+	char name[20];		// 예매자
+	char b_seat[10];	// 예매 좌석
+	int num;			// 예매 번호
+} information;
+
+int gigSeat[10][10] = { 0 };
+int concertSeat[10][10] = { 0 };
 
 void main()
 {
+	// 회원가입시 입력한 정보 저장(이름, 비번)
 	char name[20] = { 0 };
 	char password[20] = { 0 };
-	int count = 0;
-	int select = 0;
 
+	int show = 0;	// selectShow에서 선택한 공연
+	int count = 0;	// 예매 횟수count, 예매 번호
+
+	// 예매 완료된 정보
+	information completion[20];
+	information gig = {"크리스마스 연극", "2021년 12월 25일 20시", "이름", "좌석", count};
+	//information concert = {"아이돌 BU 콘서트", "2021년 12월 15일 20시", name, seat, count};
+
+	// 시작
 	template();
 	intro();
+	// 회원가입
 	join(name, password);
 	while (1)
 	{
+		// 로그인
 		int res = login(name, password);
 		if (res == 1)
 			break;
 	}
+
+	// 매뉴 선택(예매, 예매 확인, 예매 취소)
 	int menu = selectMenu();
 	switch (menu)
 	{
+	// menu1 : 공연 예매 하기
 	case 1:
-		selectShow();
-		switch (select)
+		show = selectShow();
+		count++; // 예매 횟수++
+		switch (show)
 		{
+		// show1 : 콘서트 예매
 		case 1:
-			//ticketing_concert();
+			//*p = concert;
+			//ticketing_concert(p);
 			break;
+		// show2 : 연극 예매
 		case 2:
-			//gig[count] = {"크리스마스 연극", "2021년 12월 25일 20시"};
+			//예매 정보 저장
+			strcpy(gig.name, name);
+			gig.num = count;
+			
 			ticketing_gig();
+			booking(show, &gig);
+
+			/*
+			//연극 정보
+			showInform = gig;
+			//예매 완료된 정보 저장
+			com = completion[count];
+			*/
+
 			break;
 		}
-		count++;
 		break;
-		/*
+	/*
+	// menu2 : 예매 내역서
 	case 2:
-		//details(); break;
+		details();
+		break;
+	// menu3 : 예매 취소
 	case 3:
 		//cancle(); break;
-		*/
+	*/
 	}
 }
 
@@ -92,6 +124,8 @@ void main()
  // 회원가입
 void join(char *name, char *password)
 {
+	int offset = 0;
+
 	system("cls");
 	template();
 	gotoxy(27, 10);
@@ -103,7 +137,11 @@ void join(char *name, char *password)
 	scanf("%s", name);
 	gotoxy(27, 20);
 	printf("사용 할 비밀번호를 입력해주세요 : ");
-	scanf("%s", password);
+	while ((password[offset] = getch()) != '\r')
+	{
+		putch('*');
+		offset++;
+	}
 
 	printf("회원 가입이 완료되었습니다!\n\n");
 	printf("enter를 누르면 로그인 화면으로 이동합니다.\n");
@@ -114,7 +152,7 @@ void join(char *name, char *password)
 int login(char *name, char *password)
 {
 	char receiveName[20] = { 0 };
-	int receivePassword[20] = { 0 };
+	char receivePassword[20] = { 0 };
 	int i = 0, offset = 0;
 
 	system("cls");
@@ -153,11 +191,12 @@ int login(char *name, char *password)
 // 메뉴 선택(예매, 예매내역, 예매취소)
 int selectMenu()
 {
+	int menu = 0;
+
+	system("cls");
 	template();
 	gotoxy(27, 10);
 
-	int menu = 0;
-	system("cls");
 	printf("C-Park에 오신 것을 환영합니다!\n\n\n");
 	printf("1. 티 켓 예 매\n\n");
 	printf("2. 예 매 확 인\n\n");
@@ -187,8 +226,9 @@ int selectShow()
 }
 
 // 좌석 선택
-void booking(int *seat)
+void booking(int show, struct information *inform)
 {
+	// 좌석 선택 과정
 	cursorView(); // 커서 숨김
 	int key = 0;
 	int inx = 30, iny = 13;
@@ -236,8 +276,14 @@ void booking(int *seat)
 			}
 		}
 	} while (key != 13);
-	
-	seat[iny-13, (inx-30)/2] = 1;
+
+	// 예약된 좌석 저장
+	int row = iny - 13;
+	int col = (inx - 30) / 2;
+	if (show = 1)
+		concertSeat[row][col] = 1;
+	else if(show = 2)
+		gigSeat[row][col] = 1;
 
 	// 예매중 화면
 	for (int i = 0; i < 5; i++)
@@ -256,17 +302,18 @@ void booking(int *seat)
 		}
 		Sleep(500);
 	}
+
+	// 예매 정보 출력
 	gotoxy(30, 17);
-	// 예매 정보 구조체로 정의하기
 	printf("예매가 완료되었습니다!\n\n");
 	printf("※ 예 매 정 보 ※\n");
-	printf("공 연 이 름 : \n");
-	printf("공 연 날 짜 : \n");
-	printf("공 연 시 간 : \n");
-	printf("예  매  자  : \n");
-	printf("예 매 좌 석 : \n");
+	printf("공 연 이 름 : %s\n", inform -> title);
+	printf("공 연 날 짜 : %s\n", inform -> date);
+	printf("예  매  자  : %s\n", inform -> name);
+	printf("예 매 좌 석 : %s\n", inform -> b_seat);
+	printf("예 매 번 호 : %d\n", inform -> num);
 
-	return seat;
+
 }
 /*
 void ticketing_concert()
@@ -277,16 +324,16 @@ void ticketing_concert()
 
 void ticketing_gig()
 {
-	system("cls");
-	int gigSeat[10][10] = { 0 };
 	int i, j;
+
+	system("cls");
 	template();
 	gotoxy(27, 5);
 	printf("연극 B&U 좌석 예매 페이지\n\n");
 	gotoxy(11, 7);
 	printf("방향키를 사용하여 커서(♡)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
 
-	// 행 열 출력
+	// 행 열 정보 출력
 	gotoxy(30, 11);
 	for (i = 0; i < 10; i++)
 		printf(" %c", 65 + i);
@@ -312,7 +359,6 @@ void ticketing_gig()
 		}
 		printf("\n");
 	}
-	booking(gigSeat);
 }
 /*
 void details();
