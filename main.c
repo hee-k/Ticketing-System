@@ -12,7 +12,7 @@ int selectMenu();
 int selectShow();
 void concert_seating();
 void gig_seating();
-void booking(int show, struct information* inform);
+void booking(int show, int count, struct information* inform, struct information* com);
 
 void details(struct information* com, int count);
 //void cancle();
@@ -46,8 +46,8 @@ void main()
 
 	// 예매 완료된 정보
 	information completion[100] = { 0 };
-	information gig = {"크리스마스 연극", "2021년 12월 25일 20시", 0, 0, 0, count};
-	information concert = {"아이돌 BU 콘서트", "2021년 12월 15일 20시", 0, 0, 0, count};
+	information gig = {"크리스마스 연극", "2021년 12월 25일 20시", 0, 0, 0, 0};
+	information concert = {"아이돌 BU 콘서트", "2021년 12월 15일 20시", 0, 0, 0, 0};
 
 	// 시작
 	intro();
@@ -74,39 +74,24 @@ void main()
 			{
 			// show1 : 콘서트 예매
 			case 1:
+				// 예매 정보 저장(이름, 예매 횟수)
 				strcpy(concert.name, name);
 				concert.num = count;
 
 				// 티켓 예매
 				concert_seating();
-				booking(show, &concert);
-
-				// concert 예매 정보 completion에 저장
-				strcpy(completion[count - 1].title, concert.title);
-				strcpy(completion[count - 1].date, concert.date);
-				strcpy(completion[count - 1].name, concert.name);
-				completion[count - 1].row = concert.row;
-				completion[count - 1].col = concert.col;
-				completion[count - 1].num = concert.num;
+				booking(show, count, &concert,  completion);
 				break;
 
 			// show2 : 연극 예매
 			case 2:
-				// 예매 정보 저장
+				// 예매 정보 저장(이름, 예매 횟수)
 				strcpy(gig.name, name);
 				gig.num = count;
 
 				// 티켓 예매
 				gig_seating();
-				booking(show, &gig);
-
-				// gig 예매 정보 completion에 저장
-				strcpy(completion[count - 1].title, gig.title);
-				strcpy(completion[count - 1].date, gig.date);
-				strcpy(completion[count - 1].name, gig.name);
-				completion[count - 1].row = gig.row;
-				completion[count - 1].col = gig.col;
-				completion[count - 1].num = gig.num;
+				booking(show, count, &gig, completion);
 				break;
 			}
 			break;
@@ -257,8 +242,8 @@ int selectShow()
 	return choice;
 }
 
-// 좌석 선택
-void booking(int show, struct information *inform)
+// 공연 예매 및 예매 정보 저장
+void booking(int show, int count, struct information *inform, struct information* com)
 {
 	// 좌석 선택 과정
 	cursorView(); // 커서 숨김
@@ -317,9 +302,17 @@ void booking(int show, struct information *inform)
 	else if (show == 2)
 		gigSeat[bookingRow][bookingCol] = 1;
 
-	// 예매 정보(구조체)에 저장
+	// 예매 정보 임시 저장(행, 열 정보)
 	inform->row = bookingRow;
 	inform->col = bookingCol;
+
+	// 예매 정보 저장(completion)
+	strcpy(com[count - 1].title, inform -> title);
+	strcpy(com[count - 1].date, inform -> date);
+	strcpy(com[count - 1].name, inform -> name);
+	com[count - 1].row = inform -> row;
+	com[count - 1].col = inform -> col;
+	com[count - 1].num = inform -> num;
 
 	// 예매중 화면
 	for (int i = 0; i < 5; i++)
@@ -457,9 +450,8 @@ void details(struct information* com, int count)
 		printf("예 매 좌 석 : %c행 %2d열\n", com[i].row+65, com[i].col+1);
 		printf("\n\n");
 	}
+	printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
 	getch();
-
-	return com;
 }
 
 // 템플릿 창
