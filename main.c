@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include <time.h>
 
 void intro();
 void join(char* name, char* password);
@@ -10,12 +11,12 @@ int login(char* name, char* password);
 int selectMenu();
 
 int selectShow();
-void concert_seating();
-void gig_seating();
+void concertSeating();
+void gigSeating();
 int booking(int show, int count, struct information* inform, struct information* com);
 
-void details(struct information* com, int count);
-//void cancle();
+int details(struct information* com, int count);
+int cancle(struct information* com, int count);
 
 void template();
 void popup();
@@ -31,8 +32,9 @@ typedef struct information {
 	int num;			// 예매 번호
 } information;
 
-int gigSeat[10][10] = { 0 };
-int concertSeat[10][10] = { 0 };
+int concertSeat[10][10] = { 0 };// 콘서트 예약된 좌석 정보
+int gigSeat[10][10] = { 0 };	// 공연 예약된 좌석 정보
+int total_count = 0;			// 유효 예매 횟수 체크(취소된 티켓 제외)
 
 void main()
 {
@@ -41,7 +43,7 @@ void main()
 	char password[20] = { 0 };
 
 	int show = 0;		 // selectShow에서 선택한 공연
-	int count = 0;		 // 예매 횟수count, 예매 번호
+	int count = 0;		 // 총 예매 횟수 == information.num, 예매 번호
 	int menu = 0;		 // 메뉴 선택
 	int re_booking = 0;  // 이미 선택된 좌석을 고를 경우 1 return
 
@@ -70,7 +72,7 @@ void main()
 		// menu1 : 공연 예매 하기
 		case 1:
 			show = selectShow();
-			count++; // 예매 횟수++
+			count++, total_count++; // 예매 횟수++
 			switch (show)
 			{
 			// show1 : 콘서트 예매
@@ -81,7 +83,7 @@ void main()
 
 				// 티켓 예매(이미 선택된 좌석이면 선택 불가)
 				do {
-					concert_seating();
+					concertSeating();
 					re_booking = booking(show, count, &concert, completion);
 				} while (re_booking == 1);
 				break;
@@ -94,7 +96,7 @@ void main()
 
 				// 티켓 예매(이미 선택된 좌석이면 선택 불가)
 				do {
-					gig_seating();
+					gigSeating();
 					re_booking = booking(show, count, &gig, completion);
 				} while (re_booking == 1);
 				break;
@@ -105,11 +107,12 @@ void main()
 		case 2:
 			details(completion, count);
 			break;
-		/*
+
 		// menu3 : 예매 취소
 		case 3:
-			//cancle(); break;
-		*/
+			cancle(completion, count);
+			break;
+
 		case 4:
 			printf("C-Park를 이용해주셔서 감사합니다.");
 			Sleep(2000);
@@ -185,7 +188,7 @@ int login(char *name, char *password)
 		putch('*');
 		offset++;
 	}
-	
+	// 같으면 0 반환
 	int n = strcmp(receiveName, name);
 	int p = strcmp(receivePassword, password);
 
@@ -252,6 +255,12 @@ int booking(int show, int count, struct information *inform, struct information*
 	int bookingRow = 0;		 // 예매 행 
 	int bookingCol = 0;		 // 예매 열
 
+	// 콘서트 예매를 위한 랜덤 변수 사용
+	int r = 0;
+	int c = 0;
+	// rr, cc : r, c로 계산해서 gotoxy에 쓸 값
+	int rr = 0, cc = 0;
+
 	do
 	{
 		gotoxy(inx, iny);
@@ -259,6 +268,27 @@ int booking(int show, int count, struct information *inform, struct information*
 		key = getch();
 		if (key == 224)
 		{
+			if (show == 1)
+			{
+				srand(time(NULL));
+				r = rand() % 10;
+				c = rand() % 10;
+				concertSeat[r][c] = 1;
+				cc = 2 * c + 30;
+				rr = r + 13;
+
+				gotoxy(cc, rr);
+				if (rr < 13)
+					rr = 13;
+				else if (rr > 22)
+					rr = 22;
+				else if (cc < 30)
+					cc = 30;
+				else if (cc > 48)
+					cc = 48;
+				(concertSeat[r][c] == 1) ? printf("□") : printf("■");
+			}
+
 			key = getch();
 			switch (key)
 			{
@@ -330,41 +360,35 @@ int booking(int show, int count, struct information *inform, struct information*
 		}
 	} while (key != 13);
 
-	// 예약된 좌석 임시 저장(행, 열 정보)
+	// 예약된 좌석의 행, 열 정보에 콘솔상 위치 저장
 	bookingRow = iny - 13;
 	bookingCol = (inx - 30) / 2;
 
 	// 이선좌 체크(이선좌면 선택 불가 -> 재선택)
-	if (concertSeat[bookingRow][bookingCol] == 1)
+	if (concertSeat[bookingRow][bookingCol] == 1 || gigSeat[bookingRow][bookingCol] == 1)
 	{
-		printf("이선좌입니다.");
+		printf("이미 선택된 좌석입니다.");
 		Sleep(500);
 		return 1;
 	}
-	if (gigSeat[bookingRow][bookingCol] == 1)
-	{
-		printf("이선좌입니다.");
-		Sleep(500);
-		return 1;
-	}
-		
+
 	// 좌석 배열에 행, 열 정보 저장
 	if (show == 1)
 		concertSeat[bookingRow][bookingCol] = 1;
 	else if (show == 2)
 		gigSeat[bookingRow][bookingCol] = 1;
 
-	// 구조체에 행, 열 정보 임시 저장
+	// 구조체에 행, 열 정보 저장
 	inform->row = bookingRow;
 	inform->col = bookingCol;
 
 	// 예매 정보 저장(completion)
-	strcpy(com[count - 1].title, inform -> title);
-	strcpy(com[count - 1].date, inform -> date);
-	strcpy(com[count - 1].name, inform -> name);
-	com[count - 1].row = inform -> row;
-	com[count - 1].col = inform -> col;
-	com[count - 1].num = inform -> num;
+	strcpy(com[count].title, inform -> title);
+	strcpy(com[count].date, inform -> date);
+	strcpy(com[count].name, inform -> name);
+	com[count].row = inform -> row;
+	com[count].col = inform -> col;
+	com[count].num = inform -> num;
 
 	// 예매중 화면
 	for (int i = 0; i < 5; i++)
@@ -407,7 +431,7 @@ int booking(int show, int count, struct information *inform, struct information*
 }
 
 // concert 좌석 출력
-void concert_seating()
+void concertSeating()
 {
 	int i, j;
 
@@ -447,7 +471,7 @@ void concert_seating()
 }
 
 // gig 좌석 출력
-void gig_seating()
+void gigSeating()
 {
 	int i, j;
 
@@ -487,15 +511,24 @@ void gig_seating()
 }
 
 // 예매 내역
-void details(struct information* com, int count)
+int details(struct information* com, int count)
 {
 	system("cls");
 	template();
 	gotoxy(27, 10);
-	printf("※ 예매 내역 확인 ※\n\n");
-	for (int i = 0; i < count; i++)
+	if (total_count == 0)
 	{
-		printf("＃%3d번\n", i + 1);
+		printf("예매 내역이 없습니다.\n");
+		printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
+		getch();
+		return 0;
+	}
+	printf("※ 예매 내역 확인 ※\n\n");
+	for (int i = 1; i <= count; i++)
+	{
+		if (com[i].num == -1)
+			continue;
+		printf("＃상 세 내 역\n\n");
 		printf("예 매 번 호 : T%05d\n", com[i].num);
 		printf("예  매  자  : %s\n", com[i].name);
 		printf("공 연 이 름 : %s\n", com[i].title);
@@ -505,6 +538,73 @@ void details(struct information* com, int count)
 	}
 	printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
 	getch();
+}
+
+// 예매 취소
+int cancle(struct information* com, int count)
+{
+	int i = 0, res = 0, can = 0;
+	char str1[50] = { 0 };
+	char str2[] = "크리스마스";
+
+	system("cls");
+	template();
+	gotoxy(27, 10);
+	if (total_count == 0)
+	{
+		printf("예매 내역이 없습니다.\n");
+		printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
+		getch();
+		return 0;
+	}
+	printf("※ 예매 내역 확인 ※\n\n");
+	for (i = 1; i <= count; i++)
+	{
+		if (com[i].num == -1)
+			continue;
+		printf("＃상 세 내 역\n\n");
+		printf("예 매 번 호 : T%05d\n", com[i].num);
+		printf("예  매  자  : %s\n", com[i].name);
+		printf("공 연 이 름 : %s\n", com[i].title);
+		printf("공 연 날 짜 : %s\n", com[i].date);
+		printf("예 매 좌 석 : %c행 %2d열\n", com[i].row + 65, com[i].col + 1);
+		printf("\n\n");
+	}
+
+	printf("\n\n취소 할 티켓의 예매번호 유효숫자를 입력해주세요 (예, T00001 -> 1입력) : ");
+	scanf("%d", &can);
+
+	for (i = 1; i <= count; i++)
+	{
+
+		if (com[i].num == can)
+		{
+			system("cls");
+			template();
+			gotoxy(27, 10);
+			printf("취소 할 티켓의 정보를 확인해주세요. 엔터를 누르면 취소됩니다.\n\n");
+			printf("＃상 세 내 역\n\n");
+			printf("예 매 번 호 : T%05d\n", com[i].num);
+			printf("예  매  자  : %s\n", com[i].name);
+			printf("공 연 이 름 : %s\n", com[i].title);
+			printf("공 연 날 짜 : %s\n", com[i].date);
+			printf("예 매 좌 석 : %c행 %2d열\n", com[i].row + 65, com[i].col + 1);
+
+			// completion의 num에 해당하는 title 문자열을 비교해서, 좌석의 행열 정보를 0으로 만들어주기
+			strcpy(com[i].title, str1); // 오류
+			res = strcmp(str1, str2);
+			(res == 0) ? gigSeat[com[i].row][com[i].col] == 0 : concertSeat[com[i].row][com[i].col] == 0;
+			// 삭제된 completion의 num에는 -1 넣기
+			com[i].num = -1;
+			total_count--;
+		}
+	}
+	getch();
+
+	printf("\n\n티켓이 취소되었습니다!\n\n");
+	printf("잠시 후 예매 내역 확인 페이지로 이동합니다.\n");
+	Sleep(1000);
+	details(com, count);
 }
 
 // 템플릿 창
