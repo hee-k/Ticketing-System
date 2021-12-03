@@ -84,7 +84,7 @@ void main()
 				// 티켓 예매(이미 선택된 좌석이면 선택 불가)
 				do {
 					concertSeating();
-					re_booking = booking(show, count, &concert, completion);
+					re_booking = booking(show, count, &concert, &completion);
 				} while (re_booking == 1);
 				break;
 
@@ -97,7 +97,7 @@ void main()
 				// 티켓 예매(이미 선택된 좌석이면 선택 불가)
 				do {
 					gigSeating();
-					re_booking = booking(show, count, &gig, completion);
+					re_booking = booking(show, count, &gig, &completion);
 				} while (re_booking == 1);
 				break;
 			}
@@ -105,12 +105,12 @@ void main()
 
 		// menu2 : 예매 내역서
 		case 2:
-			details(completion, count);
+			details(&completion, count);
 			break;
 
 		// menu3 : 예매 취소
 		case 3:
-			cancle(completion, count);
+			cancle(&completion, count);
 			break;
 
 		case 4:
@@ -365,7 +365,7 @@ int booking(int show, int count, struct information *inform, struct information*
 	bookingCol = (inx - 30) / 2;
 
 	// 이선좌 체크(이선좌면 선택 불가 -> 재선택)
-	if (concertSeat[bookingRow][bookingCol] == 1 || gigSeat[bookingRow][bookingCol] == 1)
+	if ((show == 1 && concertSeat[bookingRow][bookingCol] == 1 || show == 2 && gigSeat[bookingRow][bookingCol] == 1))
 	{
 		printf("이미 선택된 좌석입니다.");
 		Sleep(500);
@@ -543,9 +543,9 @@ int details(struct information* com, int count)
 // 예매 취소
 int cancle(struct information* com, int count)
 {
-	int i = 0, res = 0, can = 0;
+	int i = 0, cancle_number = 0;
 	char str1[50] = { 0 };
-	char str2[] = "크리스마스";
+	char str2[] = "크리스마스 연극";
 
 	system("cls");
 	template();
@@ -572,12 +572,12 @@ int cancle(struct information* com, int count)
 	}
 
 	printf("\n\n취소 할 티켓의 예매번호 유효숫자를 입력해주세요 (예, T00001 -> 1입력) : ");
-	scanf("%d", &can);
+	scanf("%d", &cancle_number);
 
 	for (i = 1; i <= count; i++)
 	{
 
-		if (com[i].num == can)
+		if (com[i].num == cancle_number)
 		{
 			system("cls");
 			template();
@@ -589,11 +589,10 @@ int cancle(struct information* com, int count)
 			printf("공 연 이 름 : %s\n", com[i].title);
 			printf("공 연 날 짜 : %s\n", com[i].date);
 			printf("예 매 좌 석 : %c행 %2d열\n", com[i].row + 65, com[i].col + 1);
-
+			
 			// completion의 num에 해당하는 title 문자열을 비교해서, 좌석의 행열 정보를 0으로 만들어주기
-			strcpy(com[i].title, str1); // 오류
-			res = strcmp(str1, str2);
-			(res == 0) ? gigSeat[com[i].row][com[i].col] == 0 : concertSeat[com[i].row][com[i].col] == 0;
+			strcpy(str1, com[i].title);
+			(strcmp(str1, str2) == 0) ? (gigSeat[com[i].row][com[i].col]) = 0 : (concertSeat[com[i].row][com[i].col] = 0);
 			// 삭제된 completion의 num에는 -1 넣기
 			com[i].num = -1;
 			total_count--;
