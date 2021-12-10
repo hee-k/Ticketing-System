@@ -139,7 +139,7 @@ void main()
 	}
 }
 
-// 프로그램 시작 화면
+// 프로그램 시작 화면 test
  void intro()
 {
 	template();
