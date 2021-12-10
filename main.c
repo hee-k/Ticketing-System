@@ -26,6 +26,7 @@ void popup();
 void ticketScreen();
 void cursorView();
 void gotoxy(int x, int y);
+void setColor(unsigned short text);
 
 typedef struct information {
 	char title[50];		// 공연 이름
@@ -35,6 +36,26 @@ typedef struct information {
 	int col;			// 예매 좌석(열)
 	int num;			// 예매 번호
 } information;
+
+// 색상 값
+enum {
+	BLACK,			//0
+	DARK_BLUE,		//1
+	DARK_GREEN,		//2
+	DARK_SKYBLUE,	//3
+	DARK_RED,		//4
+	DARK_VOILET,	//5
+	DAKR_YELLOW,	//6
+	GRAY,			//7
+	DARK_GRAY,		//8
+	BLUE,			//9
+	GREEN,			//10
+	SKYBLUE,		//11
+	RED,			//12
+	VIOLET,			//13
+	YELLOW,			//14
+	WHITE,			//15
+};
 
 int concertSeat[10][10] = { 0 };// 콘서트 예약된 좌석 정보
 int gigSeat[10][10] = { 0 };	// 공연 예약된 좌석 정보
@@ -143,12 +164,9 @@ void main()
  void intro()
 {
 	template();
-	gotoxy(27, 10);
-	printf("티켓 예매가 필요할 땐, C-Park !\n\n");
-	gotoxy(16, 19);
-	printf("\t\t\t20214116 김희선\n\n\n\n");
-	gotoxy(30, 27);
-	printf("enter를 눌러 시작하기>>>>\n");
+	gotoxy(27, 10); printf("티켓 예매가 필요할 땐, C-Park !\n\n");
+	gotoxy(16, 19); printf("\t\t\t20214116 김희선\n\n\n\n");
+	gotoxy(30, 27); printf("enter를 눌러 시작하기>>>>\n");
 	gotoxy(54, 27);
 	getch();
 }
@@ -160,22 +178,17 @@ void join(char *name, char *password)
 
 	system("cls");
 	template();
-	gotoxy(17, 10);
-	printf("티켓 예매 프로그램 C-Park 에 오신 것을 환영합니다!\n\n");
-	gotoxy(17, 13);
-	printf("먼저, 원활한 티켓 예매를 위해 회원가입을 진행해주세요.\n\n");
-	gotoxy(26, 17);
-	printf("√이    름 을 입력해주세요 : ");
+	gotoxy(17, 10); printf("티켓 예매 프로그램 C-Park 에 오신 것을 환영합니다!\n\n");
+	gotoxy(17, 13); printf("먼저, 원활한 티켓 예매를 위해 회원가입을 진행해주세요.\n\n");
+	gotoxy(26, 17); printf("√이    름 을 입력해주세요 : ");
 	scanf("%s", name);
-	gotoxy(26, 20);
-	printf("√비밀번호 를 입력해주세요 : ");
+	gotoxy(26, 20); printf("√비밀번호 를 입력해주세요 : ");
 	while ((password[offset] = getch()) != '\r')
 	{
 		putch(password[offset]);
 		offset++;
 	}
-	gotoxy(8, 27);
-	printf("\033[0;34m회원 가입이 완료되었습니다! enter를 누르면 로그인 화면으로 이동합니다.\033[0m\n\n\n");
+	gotoxy(8, 27); printf("\033[0;34m회원 가입이 완료되었습니다! enter를 누르면 로그인 화면으로 이동합니다.\033[0m\n\n\n");
 	gotoxy(77, 27);
 	getch();
 }
@@ -189,13 +202,11 @@ int login(char *name, char *password)
 
 	system("cls");
 	template();
-	gotoxy(22, 10);
-	printf("C-Park 티켓 예매를 위해 로그인을 해주세요.\n");
-	gotoxy(30, 17);
-	printf("√이      름  :  ");
+	gotoxy(22, 10); printf("C-Park 티켓 예매를 위해 로그인을 해주세요.\n");
+	gotoxy(30, 17); printf("√이      름  :  ");
 	scanf("%s", receiveName);
-	gotoxy(30, 20);
-	printf("√비 밀 번 호 :  ");
+
+	gotoxy(30, 20); printf("√비 밀 번 호 :  ");
 	while ((receivePassword[offset] = getch()) != '\r')
 	{
 		putch('*');
@@ -207,19 +218,17 @@ int login(char *name, char *password)
 
 	if (n == 0 && p == 0)
 	{
-		gotoxy(27, 27);
-		printf("\033[0;34m * * 로그인 성공! * * \033[0m\n\n\n");
-		gotoxy(40, 27);
+		gotoxy(31, 27); printf("\033[0;34m * * 로그인 성공! * * \033[0m\n\n\n");
+		gotoxy(51, 27);
 		Sleep(2000);
 		return 1;
 	}
 		
 	else
 	{
-		gotoxy(20, 27);
-		printf("\033[0;31m로그인에 실패하였습니다. 다시 시도해주세요!\033[0m\n\n");
-		gotoxy(60, 27);
-		Sleep(1000);
+		gotoxy(20, 27); printf("\033[0;31m로그인에 실패하였습니다. 다시 시도해주세요!\033[0m\n\n");
+		gotoxy(62, 27);
+		Sleep(2000);
 		return 2;
 	}
 }
@@ -231,13 +240,13 @@ int selectMenu(char *name)
 
 	system("cls");
 	template();
-	gotoxy(27, 10);
+	gotoxy(25, 10);
 	printf("%s님, C-Park 에 오신 것을 환영합니다!\n\n\n", name);
-	printf("1. 티 켓 예 매\n\n");
-	printf("2. 예 매 확 인\n\n");
-	printf("3. 예 매 취 소\n\n");
-	printf("4. 종      료\n\n");
-	printf("이용하실 메뉴를 선택해주세요(번호 입력) : _\b");
+	gotoxy(35, 14); printf("1. 티 켓 예 매\n\n");
+	gotoxy(35, 16); printf("2. 예 매 확 인\n\n");
+	gotoxy(35, 18); printf("3. 예 매 취 소\n\n");
+	gotoxy(35, 20); printf("4. 종       료\n\n");
+	gotoxy(23, 24); printf("이용하실 메뉴를 선택해주세요(번호 입력) : _\b");
 	
 	scanf("%d", &menu);
 	return menu;
@@ -250,12 +259,11 @@ int selectShow()
 
 	system("cls");
 	template();
-	gotoxy(27, 10);
 
-	printf("현재 진행중인 공연 리스트입니다.\n\n\n");
-	printf("1번  아이돌 BU 콘서트/2021년 12월 15일 18시\n\n");
-	printf("2번  크리스마스 연극/2021년 12월 25일 20시\n\n");
-	printf("예매 하실 공연을 선택해주세요.(번호 입력) : ");
+	gotoxy(27, 10); printf("현재 진행중인 공연 리스트입니다.\n\n\n");
+	gotoxy(20, 15); printf("1번\t아이돌 BU 콘서트 (2021년 12월 15일 18시)\n\n");
+	gotoxy(20, 18); printf("2번\t크리스마스 연극  (2021년 12월 25일 20시)\n\n");
+	gotoxy(22, 24); printf("예매 하실 공연을 선택해주세요.(번호 입력) : ");
 	scanf("%d", &choice);
 	
 	return choice;
@@ -280,7 +288,7 @@ int booking(int show, int count, struct information* inform, struct information*
 	do
 	{
 		gotoxy(inx, iny);
-		printf("\033[1;31m♥\033[0m\b\b");
+		printf("\033[1;31m♥\033[0m\b\b"); // 빨간색 하트로 커서 표시
 		key = getch();
 		if (key == 224)
 		{
@@ -312,7 +320,7 @@ int booking(int show, int count, struct information* inform, struct information*
 				gotoxy(inx, iny);
 				switch (show)
 				{
-					// 예약된 자리는 □로 다시 놓고, 남은 자리는 ■로 다시 놓기(커서 궤도를 안보이게 하기 위해)
+					// 예약된 자리는 ■로 다시 놓고, 남은 자리는 □로 다시 놓기(커서 궤도를 안보이게 하기 위해)
 				case 1:
 					(concertSeat[iny - 13][(inx - 30) / 2] == 1) ? printf("■") : printf("□");
 					break;
@@ -383,8 +391,11 @@ int booking(int show, int count, struct information* inform, struct information*
 	// 이선좌 체크(이선좌면 선택 불가 -> 재선택)
 	if ((show == 1 && concertSeat[bookingRow][bookingCol] == 1 || show == 2 && gigSeat[bookingRow][bookingCol] == 1))
 	{
-		printf("이미 다른 사람이 선택한 좌석입니다.");
-		Sleep(500);
+		system("cls");
+		template();
+		popup();
+		gotoxy(27, 16); printf("이미 다른 사람이 선택한 좌석입니다.");
+		Sleep(1000);
 		return 1;
 	}
 
@@ -411,10 +422,10 @@ int booking(int show, int count, struct information* inform, struct information*
 	{
 		system("cls");
 		template();
-		gotoxy(23, 7);
+		gotoxy(23, 11);
 		printf("\n\t\t\t예매 중입니다. . 잠시 기다려주세요. .\t");
 
-		gotoxy(25, 12);
+		gotoxy(25, 17);
 		for (int j = 0; j < 5; j++) {
 			if (j <= i)
 				printf("▶\t");
@@ -427,22 +438,14 @@ int booking(int show, int count, struct information* inform, struct information*
 	// 예매 정보 출력
 	system("cls");
 	template();
-	gotoxy(30, 7);
-	printf("예매가 완료되었습니다!\n");
-	gotoxy(20, 13);
-	printf("※ 예 매 정 보 ※\n");
-	gotoxy(20, 15);
-	printf("예 매 번 호 : T%05d\n", inform->num);
-	gotoxy(20, 17);
-	printf("예  매  자  : %s\n", inform->name);
-	gotoxy(20, 19);
-	printf("공 연 이 름 : %s\n", inform->title);
-	gotoxy(20, 21);
-	printf("공 연 날 짜 : %s\n", inform->date);
-	gotoxy(20, 23);
-	printf("예 매 좌 석 : %c행 %2d열\n", (inform->row) + 65, (inform->col) + 1);
-	gotoxy(30, 27);
-	printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
+	gotoxy(32, 7); printf("\033[0;32m예매가 완료되었습니다 !\033[0m\n");
+	gotoxy(34, 11);printf("※ 예 매 정 보 ※\n");
+	gotoxy(27, 14);printf("예 매 번 호 : T%05d\n", inform->num);
+	gotoxy(27, 16);printf("예  매  자  : %s\n", inform->name);
+	gotoxy(27, 18);printf("공 연 이 름 : %s\n", inform->title);
+	gotoxy(27, 20);printf("공 연 날 짜 : %s\n", inform->date);
+	gotoxy(27, 22);printf("예 매 좌 석 : %c행 %2d열\n", (inform->row) + 65, (inform->col) + 1);
+	gotoxy(22, 26);printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
 	getch();
 }
 
@@ -453,15 +456,14 @@ void concertSeating()
 
 	system("cls");
 	template();
-	gotoxy(26, 5);
-	printf("아이돌 BU 콘서트 좌석 예매 페이지\n\n");
-	gotoxy(11, 7);
-	printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
+	gotoxy(24, 5); printf("아이돌 BU 콘서트 좌석 예매 페이지\n\n");
+	gotoxy(11, 7); printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
+	gotoxy(19, 26); printf("예약 가능한 좌석 : □\t예매 불가능한 좌석 : ■");
 
 	// 행 열 정보 출력
 	gotoxy(30, 11);
 	for (i = 1; i < 11; i++)
-		printf("%2d", i);
+		printf(" %d", i);
 
 	for (i = 0; i < 10; i++)
 	{
@@ -476,7 +478,7 @@ void concertSeating()
 		gotoxy(30, 13 + i);
 		for (j = 0; j < 10; j++)
 		{
-			// 예약된 자리이면 □
+			// 예약된 자리이면 ■
 			if (concertSeat[i][j] == 1)
 				printf("■");
 			else
@@ -493,15 +495,15 @@ void gigSeating()
 
 	system("cls");
 	template();
-	gotoxy(27, 5);
-	printf("크리스마스 연극 예매 페이지\n\n");
-	gotoxy(11, 7);
-	printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
+
+	gotoxy(24, 5); printf("크리스마스 연극 예매 페이지\n\n");
+	gotoxy(11, 7); printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
+	gotoxy(19, 26); printf("예약 가능한 좌석 : □\t예매 불가능한 좌석 : ■");
 
 	// 행 열 정보 출력
 	gotoxy(30, 11);
 	for (i = 1; i < 11; i++)
-		printf("%2d", i);
+		printf(" %d", i); // 정렬 안맞는 부분 수정하기
 
 	for (i = 0; i < 10; i++)
 	{
@@ -516,7 +518,7 @@ void gigSeating()
 		gotoxy(30, 13 + i);
 		for (j = 0; j < 10; j++)
 		{
-			// 예약된 자리이면 □
+			// 예약된 자리이면 ■
 			if (gigSeat[i][j] == 1)
 				printf("■");
 			else
@@ -526,7 +528,7 @@ void gigSeating()
 	}
 }
 
-// 예매 내역
+// 예매 내역(출력 수정하기)
 int details(struct information* com, int count)
 {
 	int n = 1;
@@ -542,21 +544,20 @@ int details(struct information* com, int count)
 	printf("※ 예매 내역 확인 ※\n\n");
 	for (int i = 0; i < count; i++)
 	{
+		if (com[i+1].num == -1)
+			continue;
+		/*
 		n *= i;
 		if (com[i].num == -1)
 			continue;
 		gotoxy(1, 17*i); // 티켓창 출력 수정하기
 		ticketScreen();
-		gotoxy(27, n + 3);
+		*/
 		printf("예  매  번  호  :  T%05d\n", com[i+1].num);
-		gotoxy(27, n + 5);
 		printf("예   매    자   :  %s\n", com[i+1].name);
-		gotoxy(27, n + 7);
 		printf("공  연  이  름  :  %s\n", com[i+1].title);
-		gotoxy(27, n + 9);
 		printf("공  연  날  짜  :  %s\n", com[i+1].date);
-		gotoxy(27, n + 11);
-		printf("예  매  좌  석  :  %c행 %2d열\n", com[i].row+65, com[i].col+1);
+		printf("예  매  좌  석  :  %c행 %2d열\n", com[i+1].row+65, com[i+1].col+1);
 	}
 	printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
 	getch();
@@ -635,8 +636,11 @@ void game(int* count, struct information* gig, struct information* com)
 	char ch = NULL;
 
 	system("cls");
-	printf("특별 이벤트가 도착하였습니다.\n");
-	printf("뽑기 게임에 도전하시겠습니까?(Y or N) : ");
+	template();
+	popup();
+	gotoxy(32, 14); printf("○        △        □");
+	gotoxy(30, 17); printf("특별 이벤트가 도착하였습니다.\n");
+	gotoxy(24, 19); printf("뽑기 게임에 도전하시겠습니까?(Y or N) : ");
 	scanf(" %c", &ch);
 
 	//소문자 입력시 대문자로 변환
@@ -652,17 +656,30 @@ void game(int* count, struct information* gig, struct information* com)
 
 		// 게임 설명
 		system("cls");
-		printf("게임을 수락하셨습니다.\n\n");
-		printf("지금부터 ○ △ □ 뽑기 게임을 시작합니다.\n\n");
-		printf("☆☆☆☆☆ 게 임 규 칙 ☆☆☆☆☆");
-		printf("규칙은 간단합니다.\n");
-		printf("○ △ □ 중에서 도형 한 개를 뽑고, 컴퓨터와 같은 도형을 뽑았다면 승리, 다른 도형을 뽑았다면 패배입니다.\n\n");
-		printf("기회는 단 한번이니, 신중히 선택해주세요.");
-		printf("게임에서 승리 시 보상으로 연극 티켓 한 장이 제공됩니다.\n");
-		printf("단, 패배시 당신이 가진 티켓 중 한 장이 취소됩니다.\n");
-		printf("enter키를 누르면 게임을 시작합니다.");
+		template();
+		popup();
+		gotoxy(33, 15); printf("게임을 수락하셨습니다.\n\n");
+		gotoxy(23, 17); printf("지금부터 ○ △ □ 뽑기 게임을 시작합니다 !\n\n");
+		Sleep(2000);
+		system("cls");
+		template();
+		gotoxy(11, 5);  printf("☆★☆★☆★☆★☆★☆★☆ 게 임 규 칙 ☆★☆★☆★☆★☆★☆★☆");
+		gotoxy(35, 8); printf("규칙은 간단합니다.\n");
+		gotoxy(16, 11); printf("먼저, ○ △ □ 중에서 마음에 드는 도형 한 개를 뽑아주세요.");
+		gotoxy(6, 13);  printf("만약 컴퓨터와 같은 도형을 뽑았다면 승리, 다른 도형을 뽑았다면 패배입니다.\n\n");
+		gotoxy(24, 16); printf("기회는 단 한 번 뿐이니, 신중히 선택해주세요.");
+		gotoxy(10, 19); printf("\033[0;31m┌─────────────────────────────WARNING─────────────────────────────┐\033[0m");
+		gotoxy(10, 20); printf("\033[0;31m│                                                                 │\033[0m");
+		gotoxy(10, 21); printf("\033[0;31m│     게임에서 승리 시 보상으로 연극 티켓 한 장이 제공됩니다.     │\033[0m");
+		gotoxy(10, 22); printf("\033[0;31m│                                                                 │\033[0m");
+		gotoxy(10, 23); printf("\033[0;31m│          단, 패배시 당신이 가진 티켓 중 한 장이 취소됩니다.     │\033[0m");
+		gotoxy(10, 24); printf("\033[0;31m│                                                                 │\033[0m");
+		gotoxy(10, 25); printf("\033[0;31m└─────────────────────────────────────────────────────────────────┘\033[0m");
+		gotoxy(27, 27); printf("enter키를 누르면 게임을 시작합니다.");
+		gotoxy(50, 27);
 		getch();
 
+		//여기부터 수정
 		while (1)
 		{
 			system("cls");
@@ -800,30 +817,18 @@ void template()
 // 팝업 창
 void popup()
 {
-	gotoxy(16, 7);
-	printf("┌────────────────────────────────────────────────────────┐\n");
-	gotoxy(16, 8);
-	printf("│  <  >                                       ―  □  X  │\n");
-	gotoxy(16, 9);
-	printf("├────────────────────────────────────────────────────────┤\n");
-	gotoxy(16, 10);
-	printf("│                                                        │\n");
-	gotoxy(16, 11);
-	printf("│                                                        │\n");
-	gotoxy(16, 12);
-	printf("│                                                        │\n");
-	gotoxy(16, 13);
-	printf("│                                                        │\n");
-	gotoxy(16, 14);
-	printf("│                                                        │\n");
-	gotoxy(16, 15);
-	printf("│                                                        │\n");
-	gotoxy(16, 16);
-	printf("│                                                        │\n");
-	gotoxy(16, 17);
-	printf("│                                                        │\n");
-	gotoxy(16, 18);
-	printf("└────────────────────────────────────────────────────────┘\n");
+	gotoxy(14, 10); printf("┌────────────────────────────────────────────────────────┐\n");
+	gotoxy(14, 11); printf("│                                                     X  │\n");
+	gotoxy(14, 12); printf("├────────────────────────────────────────────────────────┤\n");
+	gotoxy(14, 13); printf("│                                                        │\n");
+	gotoxy(14, 14); printf("│                                                        │\n");
+	gotoxy(14, 15); printf("│                                                        │\n");
+	gotoxy(14, 16); printf("│                                                        │\n");
+	gotoxy(14, 17); printf("│                                                        │\n");
+	gotoxy(14, 18); printf("│                                                        │\n");
+	gotoxy(14, 19); printf("│                                                        │\n");
+	gotoxy(14, 20); printf("│                                                        │\n");
+	gotoxy(14, 21); printf("└────────────────────────────────────────────────────────┘\n");
 }
 
 // 티켓 창
@@ -858,6 +863,12 @@ void gotoxy(int x, int y)
 {
 	COORD Pos = {x - 1, y - 1};
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
+}
+
+// 텍스트 색상 변경
+void setColor(unsigned short text)
+{
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), text);
 }
 
 /*
