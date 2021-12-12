@@ -16,8 +16,9 @@ void concertSeating();
 void gigSeating();
 int booking(int show, int count, struct information* inform, struct information* com);
 
-int details(struct information* com, int count);
-int cancle(struct information* com, int count);
+void details(struct information* com, int count);
+void cancle(struct information* com, int count);
+void nonDetails();
 
 void game(int* count, struct information* gig, struct information* com);
 
@@ -99,7 +100,7 @@ void main()
 				} while (re_booking == 1);
 				break;
 
-				// show2 : 연극 예매
+			// show2 : 연극 예매
 			case 2:
 				// 예매 정보 저장(이름, 예매 횟수)
 				strcpy(gig.name, name);
@@ -121,12 +122,26 @@ void main()
 
 		// menu2 : 예매 내역서
 		case 2:
-			details(&completion, count);
+			if (total_count == 0)
+				nonDetails();
+			else
+			{
+				details(&completion, count);
+				printf("\n\n\n\t\t\033[0;34m   enter키를 누르면 메뉴 페이지로 이동합니다>>\033[0m");
+				getch();
+			}
 			break;
 
 		// menu3 : 예매 취소
 		case 3:
-			cancle(&completion, count);
+			if (total_count == 0)
+				nonDetails();
+			else
+			{
+				cancle(&completion, count);
+				printf("\n\n\n\t\t\033[0;34m   enter키를 누르면 메뉴 페이지로 이동합니다>>\033[0m");
+				getch();
+			}
 			break;
 
 		// menu4 : 프로그램 종료
@@ -518,7 +533,7 @@ void gigSeating()
 }
 
 // 예매 내역(출력 수정하기)
-int details(struct information* com, int count)
+void details(struct information* com, int count)
 {
 	int ticket_y = 4;				// 티켓 창 출력 위치
 	int detail_x = 28, detail_y = 6;// 티켓 내용 출력 위치
@@ -526,16 +541,7 @@ int details(struct information* com, int count)
 
 	system("cls");
 	cursorView(0);
-	if (total_count == 0)
-	{
-		template();
-		popup();
-		gotoxy(34, 15); printf("예매 내역이 없습니다.\n");
-		gotoxy(22, 18); printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
-		gotoxy(64, 18);
-		getch();
-		return 0;
-	}
+
 	gotoxy(34, 2); printf("\033[0;34m※  예  매  내  역  ※\033[0m\n");
 	for (int i = 0; i < count; i++)
 	{
@@ -555,51 +561,17 @@ int details(struct information* com, int count)
 		gotoxy(detail_x, detail_y+8); printf("예  매  좌  석  :  %c행 %2d열\n", com[i+1].row+65, com[i+1].col+1);
 		ticket_y += 13; detail_y += 13; num_y += 13;
 	}
-	printf("\n\n\n\t\t\033[0;34m   enter키를 누르면 메뉴 페이지로 이동합니다>>\033[0m");
-	getch();
 }
 
 // 예매 취소
-int cancle(struct information* com, int count)
+void cancle(struct information* com, int count)
 {
 	int i = 0, cancle_number = 0;
 	char str1[50] = { 0 };
 	char str2[] = "크리스마스 연극";
 
-	int ticket_y = 4;				// 티켓 창 출력 위치
-	int detail_x = 28, detail_y = 6;// 티켓 내용 출력 위치
-	int num_x = 4, num_y = 8;		// 티켓 번호 출력 위치
-
-	// 예매 내역 출력
-	system("cls");
-	cursorView(0);
-	if (total_count == 0)
-	{
-		template();
-		popup();
-		gotoxy(34, 15); printf("예매 내역이 없습니다.\n");
-		gotoxy(22, 18); printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
-		gotoxy(64, 18);
-		getch();
-		return 0;
-	}
-	gotoxy(34, 2); printf("\033[0;34m※  예  매  내  역  ※\033[0m\n");
-	for (int i = 0; i < count; i++, ticket_y += 13, detail_y += 13, num_y += 13)
-	{
-		// 취소된 티켓은 출력 X
-		if (com[i + 1].num == -1)
-			continue;
-
-		gotoxy(1, ticket_y); ticketScreen();
-
-		gotoxy(num_x, num_y);		  printf("티켓 고유 번호");
-		gotoxy(num_x, num_y + 3);		  printf("%7d", com[i + 1].num);
-		gotoxy(detail_x, detail_y);   printf("예  매  번  호  :  T%05d\n", com[i + 1].num);
-		gotoxy(detail_x, detail_y + 2); printf("예   매    자   :  %s\n", com[i + 1].name);
-		gotoxy(detail_x, detail_y + 4); printf("공  연  이  름  :  %s\n", com[i + 1].title);
-		gotoxy(detail_x, detail_y + 6); printf("공  연  날  짜  :  %s\n", com[i + 1].date);
-		gotoxy(detail_x, detail_y + 8); printf("예  매  좌  석  :  %c행 %2d열\n", com[i + 1].row + 65, com[i + 1].col + 1);
-	}
+	// 티켓 상세내역 출력
+	details(com, count);
 	cursorView(1);
 	printf("\n\n\n\t\t\033[0;34m   취소 할 티켓의 고유 번호를 입력해주세요 : _\b\033[0m");
 	scanf("%d", &cancle_number);
@@ -612,7 +584,7 @@ int cancle(struct information* com, int count)
 			system("cls");
 			template();
 			cursorView(0);
-			gotoxy(13, 7);  printf("\033[0;32m취소 할 티켓의 정보를 확인해주세요. 엔터를 누르면 취소됩니다.\033[0m\n");
+			gotoxy(8, 7);  printf("\033[0;32m취소 할 티켓의 정보를 확인해주세요. enter키를 누르면 티켓이 취소됩니다.\033[0m\n");
 			gotoxy(34, 11); printf("※ 티 켓 확 인 ※\n\n");
 			gotoxy(27, 14); printf("예 매 번 호 : T%05d\n", com[i].num);
 			gotoxy(27, 16); printf("예  매  자  : %s\n", com[i].name);
@@ -642,7 +614,16 @@ int cancle(struct information* com, int count)
 		Sleep(800);
 	}
 	details(com, count);
-	return 0;
+}
+
+// 예매내역이 없는 경우
+void nonDetails()
+{
+	template();
+	popup();
+	gotoxy(34, 15); printf("예매 내역이 없습니다.\n");
+	gotoxy(22, 18); printf("enter키를 누르면 메뉴 페이지로 이동합니다>>");
+	getch();
 }
 
 // 2장 예매당 게임 1회
