@@ -48,7 +48,7 @@ int total_count = 0;			// 유효 예매 횟수 체크(취소된 티켓 제외)
 void main()
 {
 	system("color F0"); // 콘솔창 배경색(흰색)
-	system("title 티켓 예매가 필요할 땐, C-Park ! (20214116 김희선)"); // 콘솔창 제목
+	system("title 티켓 예매가 필요할 땐, Ticket-C ! (20214116 김희선)"); // 콘솔창 제목
 
 	// 회원가입시 입력한 정보 저장(이름, 비번)
 	char name[20] = { 0 };
@@ -147,7 +147,7 @@ void main()
 		// menu4 : 프로그램 종료
 		case 4:
 			cursorView(0);
-			gotoxy(28, 27); printf("\033[0;34mC-Park를 이용해주셔서 감사합니다.\033[0m");
+			gotoxy(28, 27); printf("\033[0;34mTicket-C 를 이용해주셔서 감사합니다.\033[0m\n\n");
 			Sleep(2000);
 			exit(1);
 		
@@ -165,8 +165,8 @@ void main()
 {
 	template();
 	cursorView(0);
-	gotoxy(27, 10); printf("티켓 예매가 필요할 땐, C-Park !\n\n");
-	gotoxy(16, 19); printf("\t\t\t20214116 김희선\n\n\n\n");
+	gotoxy(27, 10); printf("티켓 예매가 필요할 땐, Ticket-C !\n\n");
+	gotoxy(35, 19); printf("20214116 김희선\n\n\n\n");
 	gotoxy(30, 27); printf("enter를 눌러 시작하기>>>>\n");
 	getch();
 }
@@ -179,7 +179,7 @@ void join(char *name, char *password)
 	system("cls");
 	template();
 	cursorView(1);
-	gotoxy(17, 10); printf("티켓 예매 프로그램 C-Park 에 오신 것을 환영합니다!\n\n");
+	gotoxy(17, 10); printf("티켓 예매 프로그램 Ticket-C 에 오신 것을 환영합니다!\n\n");
 	gotoxy(17, 13); printf("먼저, 원활한 티켓 예매를 위해 회원가입을 진행해주세요.\n\n");
 	gotoxy(26, 17); printf("√이    름 을 입력해주세요 : ");
 	scanf("%s", name);
@@ -204,7 +204,7 @@ int login(char *name, char *password)
 	system("cls");
 	template();
 	cursorView(1);
-	gotoxy(22, 10); printf("C-Park 티켓 예매를 위해 로그인을 해주세요.\n");
+	gotoxy(22, 10); printf("Ticket-C 티켓 예매를 위해 로그인을 해주세요.\n");
 	gotoxy(30, 17); printf("√이      름  :  ");
 	scanf("%s", receiveName);
 
@@ -223,7 +223,7 @@ int login(char *name, char *password)
 	if (n == 0 && p == 0)
 	{
 		gotoxy(31, 27); printf("\033[0;34m * * 로그인 성공! * * \033[0m\n\n\n");
-		Sleep(2000);
+		Sleep(1000);
 		return 1;
 	}
 		
@@ -243,8 +243,7 @@ int selectMenu(char *name)
 	system("cls");
 	template();
 	cursorView(1);
-	gotoxy(25, 10);
-	printf("%s님, C-Park 에 오신 것을 환영합니다!\n\n\n", name);
+	gotoxy(23, 10); printf("%s님, Ticket-C 에 오신 것을 환영합니다!\n\n\n", name);
 	gotoxy(35, 14); printf("1. 티 켓 예 매\n\n");
 	gotoxy(35, 16); printf("2. 예 매 확 인\n\n");
 	gotoxy(35, 18); printf("3. 예 매 취 소\n\n");
