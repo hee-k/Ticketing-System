@@ -147,7 +147,7 @@ void main()
 		// menu4 : 프로그램 종료
 		case 4:
 			cursorView(0);
-			gotoxy(28, 27); printf("\033[0;34mTicket-C 를 이용해주셔서 감사합니다.\033[0m\n\n");
+			gotoxy(26, 27); printf("\033[0;34mTicket-C 를 이용해주셔서 감사합니다.\033[0m\n\n");
 			Sleep(2000);
 			exit(1);
 		
@@ -459,7 +459,7 @@ void concertSeating()
 
 	system("cls");
 	template();
-	gotoxy(24, 5); printf("아이돌 BU 콘서트 좌석 예매 페이지\n\n");
+	gotoxy(26, 5); printf("아이돌 BU 콘서트 좌석 예매 페이지\n\n");
 	gotoxy(11, 7); printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
 	gotoxy(16, 26); printf("예매 가능한 좌석 : □\t\t예매 불가능한 좌석 : ■");
 
@@ -499,7 +499,7 @@ void gigSeating()
 	system("cls");
 	template();
 
-	gotoxy(24, 5); printf("크리스마스 연극 예매 페이지\n\n");
+	gotoxy(28, 5); printf("크리스마스 연극 예매 페이지\n\n");
 	gotoxy(11, 7); printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
 	gotoxy(16, 26); printf("예매 가능한 좌석 : □\t\t예매 불가능한 좌석 : ■");
 
@@ -646,7 +646,8 @@ void game(int* count, struct information* gig, struct information* com)
 	if (ch == 'Y')
 	{
 		srand(time(NULL));
-		int computer = rand() % 3 + 1; // 컴퓨터가 선택하는 도형
+		int computer = 1;
+		// int computer = rand() % 3 + 1; // 컴퓨터가 선택하는 도형
 		int player = 0;   // 사용자가 선택하는 도형
 
 		// 게임 설명
@@ -654,7 +655,7 @@ void game(int* count, struct information* gig, struct information* com)
 		template();
 		popup();
 		gotoxy(33, 15); printf("게임을 수락하셨습니다.\n\n");
-		gotoxy(24, 17); printf("지금부터 ○ △ □ 뽑기 게임을 시작합니다 !\n\n");
+		gotoxy(24, 18); printf("지금부터 ○ △ □ 뽑기 게임을 시작합니다 !\n\n");
 		Sleep(2000);
 
 		system("cls");
