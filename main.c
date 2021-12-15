@@ -245,7 +245,7 @@ int selectMenu(char *name)
 	cursorView(1);
 	gotoxy(23, 10); printf("%s님, Ticket-C 에 오신 것을 환영합니다!\n\n\n", name);
 	gotoxy(35, 14); printf("1. 티 켓 예 매\n\n");
-	gotoxy(35, 16); printf("2. 예 매 확 인\n\n");
+	gotoxy(35, 16); printf("2. 예 매 내 역\n\n");
 	gotoxy(35, 18); printf("3. 예 매 취 소\n\n");
 	gotoxy(35, 20); printf("4. 종       료\n\n");
 	gotoxy(23, 24); printf("이용하실 메뉴를 선택해주세요(번호 입력) : _\b");
@@ -296,6 +296,7 @@ int booking(int show, int count, struct information* inform, struct information*
 		key = getch();
 		if (key == 224)
 		{
+			// 콘서트는 랜덤으로 좌석 사라짐(예매됨)
 			if (show == 1)
 			{
 				srand(time(NULL));
@@ -531,7 +532,7 @@ void gigSeating()
 	}
 }
 
-// 예매 내역(출력 수정하기)
+// 예매 내역(출력 수정 완료)
 void details(struct information* com, int count)
 {
 	int ticket_y = 4;				// 티켓 창 출력 위치
@@ -554,7 +555,7 @@ void details(struct information* com, int count)
 		gotoxy(num_x, num_y);		  printf("티켓 고유 번호");
 		gotoxy(num_x, num_y+3);		  printf("%7d", com[i + 1].num);
 		gotoxy(detail_x, detail_y);   printf("예  매  번  호  :  T%05d\n", com[i + 1].num);
-		gotoxy(detail_x, detail_y+2); printf("예   매    자   :  %s\n", com[i+1].name);
+		gotoxy(detail_x, detail_y+2); printf("예    매    자  :  %s\n", com[i+1].name);
 		gotoxy(detail_x, detail_y+4); printf("공  연  이  름  :  %s\n", com[i+1].title);
 		gotoxy(detail_x, detail_y+6); printf("공  연  날  짜  :  %s\n", com[i+1].date);
 		gotoxy(detail_x, detail_y+8); printf("예  매  좌  석  :  %c행 %2d열\n", com[i+1].row+65, com[i+1].col+1);
@@ -618,6 +619,7 @@ void cancle(struct information* com, int count)
 // 예매내역이 없는 경우
 void nonDetails()
 {
+	system("cls");
 	template();
 	popup();
 	gotoxy(34, 15); printf("예매 내역이 없습니다.\n");
@@ -646,8 +648,7 @@ void game(int* count, struct information* gig, struct information* com)
 	if (ch == 'Y')
 	{
 		srand(time(NULL));
-		int computer = 1;
-		// int computer = rand() % 3 + 1; // 컴퓨터가 선택하는 도형
+		int computer = rand() % 3 + 1; // 컴퓨터가 선택하는 도형
 		int player = 0;   // 사용자가 선택하는 도형
 
 		// 게임 설명
