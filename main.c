@@ -47,7 +47,7 @@ int total_count = 0;			// 유효 예매 횟수 체크(취소된 티켓 제외)
 void main()
 {
 	system("color F0"); // 콘솔창 배경색(흰색)
-	system("title 티켓 예매가 필요할 땐, Ticket-C ! (20214116 김희선)"); // 콘솔창 제목
+	system("title 티켓 예매가 필요할 땐, Ticket-C !"); // 콘솔창 제목
 
 	// 회원가입시 입력한 정보 저장(이름, 비번)
 	char name[20] = { 0 };
@@ -60,7 +60,7 @@ void main()
 
 	// 예매 완료된 정보
 	information completion[100] = { 0 };
-	information concert = { "아이돌 BU 콘서트", "2021년 12월 15일 20시", 0, 0, 0, 0 };
+	information concert = { "아이돌 콘서트", "2021년 12월 15일 20시", 0, 0, 0, 0 };
 	information gig = { "크리스마스 연극", "2021년 12월 25일 20시", 0, 0, 0, 0 };
 
 	// 시작
@@ -163,7 +163,7 @@ void intro()
 	template();
 	cursorView(0);
 	gotoxy(27, 10); printf("티켓 예매가 필요할 땐, Ticket-C !\n\n");
-	gotoxy(35, 19); printf("20214116 김희선\n\n\n\n");
+	gotoxy(35, 19); printf("HeeSun Kim\n\n\n\n");
 	gotoxy(30, 27); printf("enter를 눌러 시작하기>>>>\n");
 	getch();
 }
@@ -261,7 +261,7 @@ int selectShow()
 	cursorView(1);
 
 	gotoxy(27, 10); printf("현재 진행중인 공연 리스트입니다.\n\n\n");
-	gotoxy(20, 15); printf("1번\t아이돌 BU 콘서트 (2021년 12월 15일 18시)\n\n");
+	gotoxy(20, 15); printf("1번\t아이돌 콘서트 (2021년 12월 15일 18시)\n\n");
 	gotoxy(20, 18); printf("2번\t크리스마스 연극  (2021년 12월 25일 20시)\n\n");
 	gotoxy(22, 24); printf("예매 하실 공연을 선택해주세요.(번호 입력) : ");
 	scanf("%d", &choice);
@@ -458,7 +458,7 @@ void concertSeating()
 
 	system("cls");
 	template();
-	gotoxy(26, 5); printf("아이돌 BU 콘서트 좌석 예매 페이지\n\n");
+	gotoxy(26, 5); printf("아이돌 콘서트 좌석 예매 페이지\n\n");
 	gotoxy(11, 7); printf("방향키를 사용하여 커서(\033[1;31m♥\033[0m)를 예매하실 좌석에 놓고 엔터를 눌러주세요\n\n");
 	gotoxy(16, 26); printf("예매 가능한 좌석 : □\t\t예매 불가능한 좌석 : ■");
 
@@ -530,7 +530,7 @@ void gigSeating()
 	}
 }
 
-// 예매 내역(출력 수정 완료)
+// 예매 내역
 void details(struct information* completion, int count)
 {
 	int ticket_y = 4;				// 티켓 창 출력 위치
